@@ -1,9 +1,7 @@
+import { CANVAS_CONFIG, BRICKS_CONFIG, WALL_CONFIG } from "../config/game";
 import Ball from "./Ball";
 import Brick from "./Brick";
 import Paddle from "./Paddle";
-
-const CANVAS_WIDTH = 800;
-const CANVAS_HEIGHT = 600;
 
 class Game {
   private canvas: HTMLCanvasElement;
@@ -15,6 +13,7 @@ class Game {
 
   private leftPressed = false;
   private rightPressed = false;
+  private stopRequested = false;
 
   constructor(containerSelector: string) {
     const container = document.querySelector<HTMLDivElement>(containerSelector);
@@ -24,15 +23,15 @@ class Game {
     }
 
     this.canvas = document.createElement("canvas");
-    this.canvas.width = CANVAS_WIDTH;
-    this.canvas.height = CANVAS_HEIGHT;
+    this.canvas.width = CANVAS_CONFIG.canvasWidth;
+    this.canvas.height = CANVAS_CONFIG.canvasHeight;
 
     container.appendChild(this.canvas);
     this.context = this.canvas.getContext("2d") as CanvasRenderingContext2D;
 
     this.ball = new Ball();
     this.paddle = new Paddle();
-    this.bricks = [new Brick(0, 0, 0, 0)];
+    this.bricks = this.createBricks();
   }
 
   // Listens for keyboard events to move the paddle
@@ -53,12 +52,17 @@ class Game {
     this.loop();
   }
 
+  public stop() {
+    this.stopRequested = true;
+  }
+
   private update() {
     if (this.leftPressed) this.paddle.moveLeft();
     if (this.rightPressed) this.paddle.moveRight();
 
     this.ball.update(this.canvas.width, this.canvas.height);
     this.paddle.update(this.canvas.width);
+    this.handleCollisions();
   }
 
   private render() {
@@ -66,13 +70,45 @@ class Game {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ball.draw(this.context);
     this.paddle.draw(this.context);
+    this.bricks.forEach((brick) => brick.draw(this.context));
   }
 
   private loop() {
     this.update();
     this.render();
 
-    requestAnimationFrame(() => this.loop());
+    if (!this.stopRequested) {
+      requestAnimationFrame(() => this.loop());
+    }
+  }
+
+  private createBricks() {
+    const bricks: Brick[] = [];
+
+    for (let row = 0; row < WALL_CONFIG.rows; row++) {
+      for (let col = 0; col < WALL_CONFIG.cols; col++) {
+        const x = col * (BRICKS_CONFIG.width + BRICKS_CONFIG.padding) + BRICKS_CONFIG.offsetLeft;
+        const y = row * (BRICKS_CONFIG.height + BRICKS_CONFIG.padding) + BRICKS_CONFIG.offsetTop;
+        console.log(`Creating brick at (${x}, ${y})`);
+        bricks.push(new Brick(x, y));
+      }
+    }
+
+    return bricks;
+  }
+
+  private handleCollisions() {
+    // Check collision with paddle
+    if (
+      this.ball.vy > 0 &&
+      this.ball.y + this.ball.radius > this.paddle.y &&
+      this.ball.x > this.paddle.x &&
+      this.ball.x < this.paddle.x + this.paddle.width
+    ) {
+      this.ball.vy = -this.ball.vy;
+    }
+
+    // Check collision with bricks (not implemented yet)
   }
 }
 

@@ -1,6 +1,4 @@
-const BALL_RADIUS = 10;
-const BALL_SPEED = 4;
-const BALL_COLOR = "#0095DD";
+import { BALL_CONFIG } from "../config/game";
 
 class Ball {
   // Initial position in the center of the canvas
@@ -8,10 +6,10 @@ class Ball {
   y = 300;
 
   // Velocity in pixels per frame
-  vx = BALL_SPEED;
-  vy = -BALL_SPEED;
+  vx = BALL_CONFIG.speed;
+  vy = -BALL_CONFIG.speed;
 
-  radius = BALL_RADIUS;
+  radius = BALL_CONFIG.radius;
 
   update(canvasWidth: number, canvasHeight: number) {
     // Calculate ball position and bouncing against the borders
@@ -30,7 +28,7 @@ class Ball {
   draw(ctx: CanvasRenderingContext2D) {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fillStyle = BALL_COLOR;
+    ctx.fillStyle = BALL_CONFIG.color;
     ctx.fill();
     ctx.closePath();
   }

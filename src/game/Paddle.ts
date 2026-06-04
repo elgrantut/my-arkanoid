@@ -1,17 +1,14 @@
-const PADDLE_WIDTH = 100;
-const PADDLE_HEIGHT = 20;
-const PADDLE_SPEED = 8;
-const PADDLE_COLOR = "#0095DD";
+import { PADDLE_CONFIG } from "../config/game";
 
 class Paddle {
   // Initial position in the bottom center of the canvas
   x = 350;
   y = 560;
 
-  width = PADDLE_WIDTH;
-  height = PADDLE_HEIGHT;
+  width = PADDLE_CONFIG.width;
+  height = PADDLE_CONFIG.height;
 
-  speed = PADDLE_SPEED;
+  speed = PADDLE_CONFIG.speed;
 
   moveLeft() {
     this.x -= this.speed;
@@ -30,7 +27,7 @@ class Paddle {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = PADDLE_COLOR;
+    ctx.fillStyle = PADDLE_CONFIG.color;
     ctx.fillRect(this.x, this.y, this.width, this.height);
   }
 }
