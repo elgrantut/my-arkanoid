@@ -13,6 +13,9 @@ class Game {
   private paddle: Paddle;
   private bricks: Brick[];
 
+  private leftPressed = false;
+  private rightPressed = false;
+
   constructor(containerSelector: string) {
     const container = document.querySelector<HTMLDivElement>(containerSelector);
 
@@ -30,22 +33,39 @@ class Game {
     this.ball = new Ball();
     this.paddle = new Paddle();
     this.bricks = [new Brick(0, 0, 0, 0)];
+  }
 
-    console.log(this.ball);
+  // Listens for keyboard events to move the paddle
+  private setupInput() {
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") this.leftPressed = true;
+      if (event.key === "ArrowRight") this.rightPressed = true;
+    });
+
+    window.addEventListener("keyup", (event) => {
+      if (event.key === "ArrowLeft") this.leftPressed = false;
+      if (event.key === "ArrowRight") this.rightPressed = false;
+    });
   }
 
   public start() {
+    this.setupInput();
     this.loop();
   }
 
   private update() {
+    if (this.leftPressed) this.paddle.moveLeft();
+    if (this.rightPressed) this.paddle.moveRight();
+
     this.ball.update(this.canvas.width, this.canvas.height);
+    this.paddle.update(this.canvas.width);
   }
 
   private render() {
     //Draw the ball
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ball.draw(this.context);
+    this.paddle.draw(this.context);
   }
 
   private loop() {
