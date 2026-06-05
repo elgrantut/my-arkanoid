@@ -1,4 +1,4 @@
-import { BRICKS_CONFIG } from "../config/game";
+import { BRICKS_CONFIG } from "@config/game";
 
 class Brick {
   constructor(

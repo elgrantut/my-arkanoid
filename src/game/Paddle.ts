@@ -1,4 +1,4 @@
-import { PADDLE_CONFIG } from "../config/game";
+import { PADDLE_CONFIG } from "@config/game";
 
 class Paddle {
   // Initial position in the bottom center of the canvas

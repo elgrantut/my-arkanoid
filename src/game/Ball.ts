@@ -1,4 +1,4 @@
-import { BALL_CONFIG } from "../config/game";
+import { BALL_CONFIG } from "@config/game";
 
 class Ball {
   // Initial position in the center of the canvas

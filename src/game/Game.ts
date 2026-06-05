@@ -1,4 +1,5 @@
-import { CANVAS_CONFIG, BRICKS_CONFIG, WALL_CONFIG } from "../config/game";
+import { CANVAS_CONFIG, BRICKS_CONFIG, WALL_CONFIG } from "@config/game";
+
 import Ball from "./Ball";
 import Brick from "./Brick";
 import Paddle from "./Paddle";
