@@ -90,7 +90,6 @@ class Game {
       for (let col = 0; col < WALL_CONFIG.cols; col++) {
         const x = col * (BRICKS_CONFIG.width + BRICKS_CONFIG.padding) + BRICKS_CONFIG.offsetLeft;
         const y = row * (BRICKS_CONFIG.height + BRICKS_CONFIG.padding) + BRICKS_CONFIG.offsetTop;
-        console.log(`Creating brick at (${x}, ${y})`);
         bricks.push(new Brick(x, y));
       }
     }
@@ -98,18 +97,50 @@ class Game {
     return bricks;
   }
 
-  private handleCollisions() {
-    // Check collision with paddle
-    if (
+  private isBallCollidingWithPaddle(): boolean {
+    return (
       this.ball.vy > 0 &&
       this.ball.y + this.ball.radius > this.paddle.y &&
       this.ball.x > this.paddle.x &&
       this.ball.x < this.paddle.x + this.paddle.width
-    ) {
+    );
+  }
+
+  private isBallCollidingWithBrick(brick: Brick): boolean {
+    const ballLeft = this.ball.x - this.ball.radius;
+    const ballRight = this.ball.x + this.ball.radius;
+    const ballTop = this.ball.y - this.ball.radius;
+    const ballBottom = this.ball.y + this.ball.radius;
+
+    const brickLeft = brick.x;
+    const brickRight = brick.x + brick.width;
+    const brickTop = brick.y;
+    const brickBottom = brick.y + brick.height;
+
+    return (
+      ballRight > brickLeft &&
+      ballLeft < brickRight &&
+      ballBottom > brickTop &&
+      ballTop < brickBottom
+    );
+  }
+
+  private handleCollisions() {
+    // Check collision with paddle
+    if (this.isBallCollidingWithPaddle()) {
       this.ball.vy = -this.ball.vy;
     }
 
-    // Check collision with bricks (not implemented yet)
+    // Check collision with bricks
+    for (const brick of this.bricks) {
+      if (brick.destroyed) continue;
+
+      if (this.isBallCollidingWithBrick(brick)) {
+        this.ball.vy = -this.ball.vy;
+        brick.destroyed = true;
+        break; // Only handle one collision per frame
+      }
+    }
   }
 }
 
